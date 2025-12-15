@@ -1,37 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import emailjs from "@emailjs/browser";
 
 const Contact: React.FC = () => {
+  const formRef = useRef<HTMLFormElement>(null);
   const [result, setResult] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setResult("");
+  const sendEmail = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setIsSubmitting(true);
+    setResult("");
 
-    const formData = new FormData(event.currentTarget);
-    // ⚠️ IMPORTANT: Replace this Access Key with your own from web3forms.com 
-    // if you haven't already. The one below is the one you provided.
-    formData.append("access_key", "6160b980-4f68-4796-b041-e7910b71a0bf");
+    // ---------------------------------------------------------
+    // REPLACE THESE WITH YOUR ACTUAL EMAILJS KEYS
+    // ---------------------------------------------------------
+    const SERVICE_ID = "YOUR_SERVICE_ID";
+    const TEMPLATE_ID = "YOUR_TEMPLATE_ID";
+    const PUBLIC_KEY = "YOUR_PUBLIC_KEY";
 
-    try {
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setResult("Message sent successfully!");
-        event.currentTarget.reset();
-      } else {
-        setResult(data.message || "Something went wrong.");
-      }
-    } catch (error) {
-      setResult("Network error. Please try again later.");
-    } finally {
-      setIsSubmitting(false);
+    if (formRef.current) {
+      emailjs
+        .sendForm(SERVICE_ID, TEMPLATE_ID, formRef.current, PUBLIC_KEY)
+        .then(
+          (result) => {
+            console.log(result.text);
+            setResult("Message sent successfully!");
+            setIsSubmitting(false);
+            e.currentTarget.reset();
+          },
+          (error) => {
+            console.log(error.text);
+            setResult("Failed to send message. Please try again.");
+            setIsSubmitting(false);
+          }
+        );
     }
   };
 
@@ -51,33 +53,32 @@ const Contact: React.FC = () => {
       {/* ---------------------- FORM SECTION ---------------------- */}
       <section className="py-24 container mx-auto px-4 -mt-10">
         <div className="grid lg:grid-cols-2 gap-0 shadow-2xl rounded-3xl overflow-hidden bg-white max-w-5xl mx-auto">
-          
-          {/* Left Side: Contact Info (Direct Mail/Phone) */}
+
+          {/* Left Side: Direct Contact Info */}
           <div className="bg-blue-600 p-10 text-white flex flex-col justify-between relative min-h-[400px]">
             <div className="relative z-10">
               <h3 className="text-2xl font-bold mb-8">Contact Information</h3>
               <p className="text-blue-100 mb-8">
-                Prefer to reach out directly? Give us a call or send us an email directly.
+                Prefer to reach out directly? Give us a call or send us an email.
               </p>
 
               <div className="space-y-6">
                 {/* Email Direct Link */}
                 <div className="flex items-start space-x-4">
                   <div className="mt-1 bg-blue-500 p-2 rounded-lg">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                   </div>
                   <div>
                     <h4 className="font-semibold text-lg">Email Us</h4>
-                    <a href="mailto:contact@yourcompany.com" className="text-blue-100 hover:text-white transition">
-                      contact@yourcompany.com
-                    </a>
+                    <a href="mailto:working.hemanshu@gmail.com" className="text-blue-100 hover:text-white transition">
+                      working.hemanshu@gmail.com</a>
                   </div>
                 </div>
 
                 {/* Phone Direct Link */}
                 <div className="flex items-start space-x-4">
                   <div className="mt-1 bg-blue-500 p-2 rounded-lg">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                   </div>
                   <div>
                     <h4 className="font-semibold text-lg">Call Us</h4>
@@ -90,7 +91,7 @@ const Contact: React.FC = () => {
                 {/* Location */}
                 <div className="flex items-start space-x-4">
                   <div className="mt-1 bg-blue-500 p-2 rounded-lg">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                   </div>
                   <div>
                     <h4 className="font-semibold text-lg">Visit Us</h4>
@@ -101,27 +102,26 @@ const Contact: React.FC = () => {
                 </div>
               </div>
             </div>
-
-            {/* Abstract circle decoration */}
+            {/* Decor */}
             <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-500 rounded-tl-full opacity-50"></div>
             <div className="absolute top-0 left-0 w-32 h-32 bg-blue-400 rounded-br-full opacity-20"></div>
           </div>
 
-          {/* Right Side Form */}
+          {/* Right Side Form (EmailJS) */}
           <div className="p-8 md:p-12 bg-white">
             <h2 className="text-2xl font-bold text-slate-800 mb-2">Have a question?</h2>
             <p className="text-slate-500 mb-8">Fill out the form below and we'll get back to you.</p>
 
-            <form className="space-y-5" onSubmit={onSubmit}>
-              <input type="checkbox" name="botcheck" className="hidden" />
+            <form ref={formRef} className="space-y-5" onSubmit={sendEmail}>
               <div className="grid md:grid-cols-2 gap-5">
                 <div className="space-y-1">
                   <label className="text-xs font-semibold text-slate-500 uppercase">Name</label>
-                  <input type="text" name="name" placeholder="Full name" className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-gray-50 focus:bg-white" required />
+                  {/* Note: 'name' attribute must match your EmailJS template variable names */}
+                  <input type="text" name="user_name" placeholder="Full name" className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-gray-50 focus:bg-white" required />
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs font-semibold text-slate-500 uppercase">Email</label>
-                  <input type="email" name="email" placeholder="Your email" className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-gray-50 focus:bg-white" required />
+                  <input type="email" name="user_email" placeholder="Your email" className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-gray-50 focus:bg-white" required />
                 </div>
               </div>
 
@@ -135,16 +135,15 @@ const Contact: React.FC = () => {
                 <textarea name="message" placeholder="Tell us about your project..." rows={4} className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-gray-50 focus:bg-white" required></textarea>
               </div>
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={isSubmitting}
-                className={`w-full py-4 rounded-lg font-bold text-white transition duration-300 shadow-lg ${
-                  isSubmitting ? "bg-slate-400 cursor-not-allowed" : "bg-slate-900 hover:bg-blue-600"
-                }`}
+                className={`w-full py-4 rounded-lg font-bold text-white transition duration-300 shadow-lg ${isSubmitting ? "bg-slate-400 cursor-not-allowed" : "bg-slate-900 hover:bg-blue-600"
+                  }`}
               >
                 {isSubmitting ? "Sending..." : "Send Message"}
               </button>
-              
+
               {result && (
                 <p className={`text-sm mt-4 text-center ${result.includes("success") ? "text-green-600" : "text-red-500"}`}>
                   {result}
