@@ -75,6 +75,7 @@ const Contact: React.FC = () => {
             <p className="text-slate-500 mb-8">Fill out the form below and we'll get back to you.</p>
 
             <form className="space-y-5" onSubmit={onSubmit}>
+              <input type="checkbox" name="botcheck" className="hidden" />
               <div className="grid md:grid-cols-2 gap-5">
                 <div className="space-y-1">
                   <label className="text-xs font-semibold text-slate-500 uppercase">Name</label>
